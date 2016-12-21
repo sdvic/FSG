@@ -39,16 +39,18 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
     ArrayList<Sensor> rightSensorList = new ArrayList<Sensor>();
     ArrayList<Emitter> leftEmitterList = new ArrayList<Emitter>();
     ArrayList<Emitter> rightEmitterList = new ArrayList<Emitter>();
-    final int SENSOR_SPACING = 50;
-    final int EMITTER_SPACING = 100;
-    final int TOP_BOTTOM_EMITTERS = (int) (room.getWidth()/EMITTER_SPACING);
-    final int LEFT_RIGHT_SIDE_EMITTERS = (int) (room.getHeight()/EMITTER_SPACING);
-    final int TOP_BOTTOM_SENSORS = (int) (room.getWidth()/SENSOR_SPACING);
-    final int LEFT_RIGHT_SIDE_SENSORS = (int) (room.getHeight()/SENSOR_SPACING);
+    int sensorSpacingInt = 50;
+    int emitterSpacingInt = 100;
+    int TOP_BOTTOM_EMITTERS;
+    int LEFT_RIGHT_SIDE_EMITTERS;
+    int TOP_BOTTOM_SENSORS; 
+    int LEFT_RIGHT_SIDE_SENSORS;
     Point2D.Double mousePoint;
     int mouseRectangleX, mouseRectangleY;
     Rectangle2D.Double mouseRectangle;
     Timer ticker = new Timer(20, this);
+    String emitterSpacing;
+    String sensorSpacing;
 
     public static void main(String[] args)
     {
@@ -70,6 +72,14 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	jf.setVisible(true);
 	jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	ticker.start();
+	emitterSpacing = JOptionPane.showInputDialog("Enter Emitter Spacing");
+	sensorSpacing = JOptionPane.showInputDialog("Enter Sensor Spacing");
+	emitterSpacingInt = Integer.parseInt(emitterSpacing);
+	sensorSpacingInt = Integer.parseInt(sensorSpacing);
+	TOP_BOTTOM_EMITTERS = (int) (room.getWidth() / emitterSpacingInt);
+	LEFT_RIGHT_SIDE_EMITTERS = (int) (room.getHeight() / emitterSpacingInt);
+	TOP_BOTTOM_SENSORS = (int) (room.getWidth() / sensorSpacingInt);
+	LEFT_RIGHT_SIDE_SENSORS = (int) (room.getHeight() / sensorSpacingInt);
 	JOptionPane.showMessageDialog(null, "Top/Bottom Emitters =  " + TOP_BOTTOM_EMITTERS + "\nTop/Bottom Sensors = " + TOP_BOTTOM_SENSORS);
     }
 
@@ -89,31 +99,31 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	g2.draw(mouseRectangle = new Rectangle2D.Double(mouseRectangleX, mouseRectangleY, 20, 20));
 	for (int i = 0; i < TOP_BOTTOM_SENSORS; i++)
 	{
-	    topSensorList.add(new Sensor((int) (room.getX() + (i * SENSOR_SPACING)), (int) room.getY()));// top
-	    bottomSensorList.add(new Sensor(140 + (i * SENSOR_SPACING), jFraneHeight - 340));// bottom
+	    topSensorList.add(new Sensor((int) (room.getX() + (i * sensorSpacingInt)), (int) room.getY()));// top
+	    bottomSensorList.add(new Sensor(140 + (i * sensorSpacingInt), jFraneHeight - 340));// bottom
 	    g2.setColor(Color.green);
 	    g2.fill(topSensorList.get(i).getSensorShape());
 	    g2.fill(bottomSensorList.get(i).getSensorShape());
 	}
 	for (int i = 0; i < TOP_BOTTOM_EMITTERS; i++)
 	{
-	    topEmitterList.add(new Emitter(140 + (i * EMITTER_SPACING), 109));// top
-	    bottomEmitterList.add(new Emitter(140 + (i * EMITTER_SPACING), jFraneHeight - 340));// bottom
+	    topEmitterList.add(new Emitter(140 + (i * emitterSpacingInt), 109));// top
+	    bottomEmitterList.add(new Emitter(140 + (i * emitterSpacingInt), jFraneHeight - 340));// bottom
 	    g2.setColor(Color.red);
 	    g2.fill(topEmitterList.get(i).getEmitterShape());
 	    g2.fill(bottomEmitterList.get(i).getEmitterShape());
 	}
 	for (int i = 0; i < LEFT_RIGHT_SIDE_EMITTERS; i++)
 	{
-	    leftEmitterList.add(new Emitter(110, jFraneHeight - 350 - (i * EMITTER_SPACING)));// left
-	    rightEmitterList.add(new Emitter(jFrameWidth - 264, (jFraneHeight - 350) - (i * EMITTER_SPACING)));// right
+	    leftEmitterList.add(new Emitter(110, (int)room.getY() - 350 - (i * emitterSpacingInt)));// left
+	    rightEmitterList.add(new Emitter(jFrameWidth - 264, (jFraneHeight - 350) - (i * emitterSpacingInt)));// right
 	    g2.setColor(Color.red);
 	    g2.fill(topEmitterList.get(i).getEmitterShape());
 	}
 	for (int i = 0; i < LEFT_RIGHT_SIDE_SENSORS; i++)
 	{
-	    leftSensorList.add(new Sensor(110, jFraneHeight - 350 - (i * SENSOR_SPACING)));// left
-	    rightSensorList.add(new Sensor(jFrameWidth - 265, jFraneHeight - 350 - (i * SENSOR_SPACING)));// right
+	    leftSensorList.add(new Sensor(110, jFraneHeight - 350 - (i * sensorSpacingInt)));// left
+	    rightSensorList.add(new Sensor(jFrameWidth - 265, jFraneHeight - 350 - (i * sensorSpacingInt)));// right
 	    g2.setColor(Color.green);
 	    g2.fill(topSensorList.get(i).getSensorShape());
 	}
@@ -124,7 +134,7 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	    {
 		if (new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine().intersects(mouseRectangle))
 		{
-		    g2.draw(new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine()); 
+		    g2.draw(new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine());
 		}
 	    }
 	}
@@ -134,7 +144,7 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	    {
 		if (new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine().intersects(mouseRectangle))
 		{
-		    g2.draw(new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine()); 
+		    g2.draw(new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine());
 		}
 	    }
 	}
