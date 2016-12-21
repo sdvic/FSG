@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.management.timer.TimerMBean;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -29,25 +30,21 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
     Rectangle2D.Double leftFrame = new Rectangle2D.Double(100, 125, 25, jFraneHeight - 475);
     Rectangle2D.Double rightFrame = new Rectangle2D.Double(jFrameWidth - 275, 125, 25, jFraneHeight - 475);
     Rectangle2D.Double screen = new Rectangle2D.Double(125, 125, jFrameWidth - 400, jFraneHeight - 475);
-    ArrayList<Ellipse2D.Double> topSensorList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> bottomSensorList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> leftSensorList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> rightSensorList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> topEmitterList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> bottomEmitterList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> leftEmitterList = new ArrayList<Ellipse2D.Double>();
-    ArrayList<Ellipse2D.Double> rightEmitterList = new ArrayList<Ellipse2D.Double>();
     ArrayList<Line2D.Double> rayLineList = new ArrayList<Line2D.Double>();
-    ArrayList<Emitter> emitterList = new ArrayList<Emitter>();
-    ArrayList<Sensor> sensorList = new ArrayList<Sensor>();
+    ArrayList<Emitter> topEmitterList = new ArrayList<Emitter>();
+    ArrayList<Sensor> topSensorList = new ArrayList<Sensor>();
+    ArrayList<Emitter> bottomEmitterList = new ArrayList<Emitter>();
+    ArrayList<Sensor> bottomSensorList = new ArrayList<Sensor>();
+    ArrayList<Sensor> leftSensorList = new ArrayList<Sensor>();
+    ArrayList<Sensor> rightSensorList = new ArrayList<Sensor>();
+    ArrayList<Emitter> leftEmitterList = new ArrayList<Emitter>();
+    ArrayList<Emitter> rightEmitterList = new ArrayList<Emitter>();
     final int SENSOR_SPACING = 50;
     final int EMITTER_SPACING = 100;
-    final int EMITTERS = 10;
-    final int TOP_BOTTOM_EMITTERS = 10;
-    final int LEFT_RIGHT_SIDE_EMITTERS = 10;
-    final int TOP_BOTTOM_SENSORS = 50;
-    final int LEFT_RIGHT_SIDE_SENSORS = 50;
-    final int SENSORS = 50;
+    final int TOP_BOTTOM_EMITTERS = (int) (room.getWidth()/EMITTER_SPACING);
+    final int LEFT_RIGHT_SIDE_EMITTERS = (int) (room.getHeight()/EMITTER_SPACING);
+    final int TOP_BOTTOM_SENSORS = (int) (room.getWidth()/SENSOR_SPACING);
+    final int LEFT_RIGHT_SIDE_SENSORS = (int) (room.getHeight()/SENSOR_SPACING);
     Point2D.Double mousePoint;
     int mouseRectangleX, mouseRectangleY;
     Rectangle2D.Double mouseRectangle;
@@ -73,6 +70,7 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	jf.setVisible(true);
 	jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	ticker.start();
+	JOptionPane.showMessageDialog(null, "Top/Bottom Emitters =  " + TOP_BOTTOM_EMITTERS + "\nTop/Bottom Sensors = " + TOP_BOTTOM_SENSORS);
     }
 
     public void paint(Graphics g)
@@ -91,38 +89,48 @@ public class Controller extends JComponent implements MouseMotionListener, Actio
 	g2.draw(mouseRectangle = new Rectangle2D.Double(mouseRectangleX, mouseRectangleY, 20, 20));
 	for (int i = 0; i < TOP_BOTTOM_SENSORS; i++)
 	{
-	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), 109));// top
-	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), jFraneHeight - 340));// bottom
+	    topSensorList.add(new Sensor((int) (room.getX() + (i * SENSOR_SPACING)), (int) room.getY()));// top
+	    bottomSensorList.add(new Sensor(140 + (i * SENSOR_SPACING), jFraneHeight - 340));// bottom
 	    g2.setColor(Color.green);
-	    g2.fill(sensorList.get(i).getSensorShape());
-	    g2.fill(sensorList.get(i).getSensorShape());
+	    g2.fill(topSensorList.get(i).getSensorShape());
+	    g2.fill(bottomSensorList.get(i).getSensorShape());
 	}
 	for (int i = 0; i < TOP_BOTTOM_EMITTERS; i++)
 	{
-	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), 109));// top
-	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), jFraneHeight - 340));// bottom
+	    topEmitterList.add(new Emitter(140 + (i * EMITTER_SPACING), 109));// top
+	    bottomEmitterList.add(new Emitter(140 + (i * EMITTER_SPACING), jFraneHeight - 340));// bottom
 	    g2.setColor(Color.red);
-	    g2.fill(emitterList.get(i).getEmitterShape());
-	    g2.fill(emitterList.get(i).getEmitterShape());
+	    g2.fill(topEmitterList.get(i).getEmitterShape());
+	    g2.fill(bottomEmitterList.get(i).getEmitterShape());
 	}
 	for (int i = 0; i < LEFT_RIGHT_SIDE_EMITTERS; i++)
 	{
-	    emitterList.add(new Emitter(110, jFraneHeight - 350 - (i * EMITTER_SPACING)));// left
-	    emitterList.add(new Emitter(jFrameWidth - 264, (jFraneHeight - 350) - (i * EMITTER_SPACING)));// right
+	    leftEmitterList.add(new Emitter(110, jFraneHeight - 350 - (i * EMITTER_SPACING)));// left
+	    rightEmitterList.add(new Emitter(jFrameWidth - 264, (jFraneHeight - 350) - (i * EMITTER_SPACING)));// right
 	    g2.setColor(Color.red);
-	    g2.fill(emitterList.get(i).getEmitterShape());
+	    g2.fill(topEmitterList.get(i).getEmitterShape());
 	}
 	for (int i = 0; i < LEFT_RIGHT_SIDE_SENSORS; i++)
 	{
-	    sensorList.add(new Sensor(110, jFraneHeight - 350 - (i * SENSOR_SPACING)));// left
-	    sensorList.add(new Sensor(jFrameWidth - 265, jFraneHeight - 350 - (i * SENSOR_SPACING)));// right
+	    leftSensorList.add(new Sensor(110, jFraneHeight - 350 - (i * SENSOR_SPACING)));// left
+	    rightSensorList.add(new Sensor(jFrameWidth - 265, jFraneHeight - 350 - (i * SENSOR_SPACING)));// right
 	    g2.setColor(Color.green);
-	    g2.fill(sensorList.get(i).getSensorShape());
+	    g2.fill(topSensorList.get(i).getSensorShape());
 	}
 
-	for (Sensor sensor : sensorList)
+	for (Sensor sensor : topSensorList)
 	{
-	    for (Emitter emitter : emitterList)
+	    for (Emitter emitter : bottomEmitterList)
+	    {
+		if (new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine().intersects(mouseRectangle))
+		{
+		    g2.draw(new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine()); 
+		}
+	    }
+	}
+	for (Sensor sensor : bottomSensorList)
+	{
+	    for (Emitter emitter : topEmitterList)
 	    {
 		if (new RayLine(emitter.getEmitterPoint(), sensor.getSensorPoint()).getLine().intersects(mouseRectangle))
 		{
