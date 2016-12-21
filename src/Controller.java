@@ -34,8 +34,10 @@ public class Controller extends JComponent
     ArrayList<Line2D.Double> rayLineList = new ArrayList<Line2D.Double>();
     ArrayList<Emitter> emitterList = new ArrayList<Emitter>();
     ArrayList<Sensor> sensorList = new ArrayList<Sensor>();
-    final int SENSOR_SPACING = 20;
-    final int EMITTER_SPACING = 90;
+    final int SENSOR_SPACING = 50;
+    final int EMITTER_SPACING = 100;
+    final int EMITTERS = 10;
+    final int SENSORS = 50;
     
     public static void main(String[] args)
     {
@@ -60,21 +62,18 @@ public class Controller extends JComponent
 	g2.draw(rightFrame);
 	g2.setColor(new Color(153, 255, 255));
 	g2.fill(screen);
-	rayLineList.add(new RayLine(new Point2D.Double(100,  100), new Point2D.Double(800,  800)).getLine());
-	g2.setColor(Color.black);
-	g2.draw(rayLineList.get(0));
-	for(int i = 0; i < 50; i ++)
+	for(int i = 0; i < SENSORS; i ++)
 	{
-	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), 109));
-	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), height - 340));
+	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), 109));//top sensor
+	    sensorList.add(new Sensor(140 + (i * SENSOR_SPACING), height - 340));//bottom sensor
 	    g2.setColor(Color.green);
 	    g2.fill(sensorList.get(i).getSensorShape());
 	    g2.fill(sensorList.get(i).getSensorShape());
 	}
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < EMITTERS; i++)
 	{
-	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), 109));
-	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), height - 340));
+	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), 109));//top emitter
+	    emitterList.add(new Emitter(140 + (i * EMITTER_SPACING), height - 340));//bottom emitter
 	    g2.setColor(Color.red);
 	    g2.fill(emitterList.get(i).getEmitterShape());
 	    g2.fill(emitterList.get(i).getEmitterShape());
